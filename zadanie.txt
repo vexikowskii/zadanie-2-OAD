@@ -1,0 +1,76 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+class Program
+{
+    static void Main()
+    {
+        string inputPath = "ranking_raw.txt";
+        string outputPath = "ranking_clean.txt";
+
+
+        List<string> lines = new List<string>(File.ReadAllLines(inputPath));
+
+
+        List<string> cleaned = new List<string>();
+
+
+        if (lines.Count > 0)
+            cleaned.Add(lines[0]);
+
+  
+        for (int i = 1; i < lines.Count; i++)
+        {
+            string line = lines[i].Trim();
+
+            // jeśli linia pusta – pomiń
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
+
+            string[] fields = line.Split(';');
+
+
+            if (fields.Length != 5)
+                continue; // linia uszkodzona → pomijamy
+
+            string nick = fields[0];
+            string czas = fields[1];
+            string pktString = fields[2];
+            string status = fields[3];
+            string opis = fields[4];
+
+
+            if (!int.TryParse(pktString, out int punkty))
+            {
+                punkty = 0;
+            }
+
+
+            bool podejrzanyCzas =
+                czas == "00:00:01" ||
+                czas == "0:00:01";
+
+            bool hacker =
+                status.ToUpper() == "HACKER" ||
+                podejrzanyCzas;
+
+            if (hacker)
+            {
+                // pomijamy tą linię – nie dodajemy jej do cleaned
+                continue;
+            }
+
+            string newLine = $"{nick};{czas};{punkty};{status};{opis}";
+            cleaned.Add(newLine);
+        }
+
+        File.WriteAllLines(outputPath, cleaned);
+
+        Console.WriteLine("=== Ranking po czyszczeniu ===");
+        foreach (string l in cleaned)
+        {
+            Console.WriteLine(l);
+        }
+    }
+}
