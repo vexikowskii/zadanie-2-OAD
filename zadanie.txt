@@ -24,7 +24,6 @@ class Program
         {
             string line = lines[i].Trim();
 
-            // jeśli linia pusta – pomiń
             if (string.IsNullOrWhiteSpace(line))
                 continue;
 
@@ -32,7 +31,7 @@ class Program
 
 
             if (fields.Length != 5)
-                continue; // linia uszkodzona → pomijamy
+                continue;
 
             string nick = fields[0];
             string czas = fields[1];
@@ -57,7 +56,6 @@ class Program
 
             if (hacker)
             {
-                // pomijamy tą linię – nie dodajemy jej do cleaned
                 continue;
             }
 
@@ -74,3 +72,4 @@ class Program
         }
     }
 }
+
